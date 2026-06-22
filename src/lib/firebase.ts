@@ -1,3 +1,62 @@
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
+
+// Firebase config daal - Firebase Console se copy kar
+const firebaseConfig = {
+  apiKey: "AIzaSyXXXXXXXXXXXXXXXXX",
+  authDomain: "checkmateprochess.firebaseapp.com",
+  projectId: "checkmateprochess",
+  storageBucket: "checkmateprochess.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef123456"
+};
+
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+
+// Academy - Ab hamesha Firebase se
+export const getAcademies = async () => {
+  const snap = await getDocs(collection(db, 'franchises')); 
+  return snap.docs.map(doc => ({ 
+    uid: doc.id, 
+    id: doc.id,
+    academyName: doc.data().academyName,
+    name: doc.data().academyName, // dono rakh de compatibility ke liye
+    city: doc.data().city,
+    ownerName: doc.data().ownerName,
+    ownerEmail: doc.data().ownerEmail,
+    ownerPhone: doc.data().ownerPhone,
+    ...doc.data()
+  }));
+};
+
+export const addAcademy = async (data: any) => {
+  return await addDoc(collection(db, 'franchises'), data);
+};
+
+export const deleteAcademy = async (id: string) => {
+  await deleteDoc(doc(db, 'franchises', id));
+};
+
+// Admin ke liye same function
+export const fetchAllAcademies = getAcademies;
+
+// Baaki functions
+export const fetchAllUsers = async () => {
+  const snap = await getDocs(collection(db, 'users'));
+  return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+};
+
+export const fetchPlayersByAcademy = async (academyUid: string) => {
+  const q = query(collection(db, 'users'), where('academyId', '==', academyUid));
+  const snap = await getDocs(q);
+  return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+};
+
+console.log("CheckMate Pro: Firebase PERMANENT MODE - No more local.db");
+
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
