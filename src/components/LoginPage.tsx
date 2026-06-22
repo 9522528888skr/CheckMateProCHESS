@@ -10,6 +10,18 @@ import {
   Loader2, 
   GraduationCap 
 } from 'lucide-react';
+const HARDCODED_ACADEMIES = [
+  { 
+    id: 'sumeet_rasela_parasia_001',
+    name: 'Sumeet Rasela Chess Academy',
+    academyName: 'Sumeet Rasela Chess Academy',
+    city: 'Parasia'
+  }
+];
+
+const LoginPage = () => {
+  const [academies, setAcademies] = useState(HARDCODED_ACADEMIES);
+  const [signUpAcademyId, setSignUpAcademyId] = useState('');
 import { 
   loginUser, 
   registerPlayer, 
