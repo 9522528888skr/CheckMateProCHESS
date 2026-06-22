@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+.player-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: #262421;
+  color: white;
+}
+
+.captures {
+  display: flex;
+  gap: 2px;
+  font-size: 20px;
+  opacity: 0.8;
+}
+
+.timer {
+  font-size: 24px;
+  font-weight: bold;
+  background: #302e2b;
+  padding: 4px 12px;
+  border-radius: 4px;
+}
+
+.timer.active {
+  background: #769656;
+  color: white;
+}
+
+/* Desktop flex layout */
+.chess-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+@media (min-width: 769px) {
+  .chess-container {
+    flex-direction: row;
+    align-items: start;
+  }
+}
+
+.pre-match-screen {
+  width: 100%;
+  max-width: 400px;
+}
+
+.match-screen {
+  width: 100%;
+  position: relative;
+}
+
+.leave-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ab3636;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: bold;
+  z-index: 100;
+  cursor: pointer;
+}
+
+/* MOBILE: Game start hone ke baad sidebar gayab */
+@media (max-width: 768px) {
+  .chess-container {
+    padding: 0;
+    gap: 0;
+  }
+
+  /* Pre-match mein sab dikhega */
+  .pre-match-screen {
+    padding: 20px;
+  }
+
+  /* Match start hone ke baad sirf board */
+  .match-screen {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #302e2b;
+  }
+
+  .player-bar {
+    padding: 8px 12px;
+  }
+
+  .leave-btn {
+    top: 5px;
+    right: 5px;
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+}
+
+/* USER REQUESTED LAYOUTS AND THEMES */
+.chess-wrap {
+  background: #302e2b;
+  min-height: 100vh;
+  color: #fff;
+  padding: 10px;
+}
+
+/* POINTS COLOR FIX */
+.points { font-weight: bold; font-size: 18px; }
+.positive-points { color: #28a745 !important; } /* Green */
+.negative-points { color: #dc3545 !important; } /* Red */
+.neutral-points { color: #1a2b4c !important; } /* Navy */
+
+/* CAPTCHA BOX */
+.captcha-box { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+
+/* CLOCK */
+.clock { font-size: 32px; font-weight: bold; }
+.clock.active { color: #28a745 !important; }
+.clock.low { color: #dc3545 !important; }
+
+/* LIVE BROADCAST TAG */
+.live-tag { 
+  background: red; color: white; padding: 2px 8px; 
+  border-radius: 4px; font-size: 12px; animation: blink 1s infinite;
+}
+@keyframes blink { 50% { opacity: 0.5; } }
+
+.pre-match {
+  max-width: 400px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+.color-btns {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.color-btns button {
+  background: #4a7c59;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.match {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.p-bar {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #262421;
+  padding: 8px 12px;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timer {
+  background: #1e1e1e;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.timer.active {
+  background: #2d5016;
+}
+
+.quit-btn {
+  background: #b33430;
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.quit-btn:hover {
+  background: #8b2a27;
+}
+
+@media(max-width: 768px) {
+  .match {
+    height: 100vh;
+    justify-content: center;
+    padding: 5px;
+  }
+  .p-bar {
+    max-width: 100%;
+  }
+}
+
+

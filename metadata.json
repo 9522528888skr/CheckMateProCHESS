@@ -1,0 +1,6 @@
+{
+  "name": "CheckMateProChess",
+  "description": "A premium Chess suite featuring customizable board themes, dual-timer configurations, local minimax chess AI, puzzle studio, and an interactive strategic Chess Coach powered by Gemini API.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

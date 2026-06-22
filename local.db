@@ -1,0 +1,29 @@
+{
+  "academies": [
+    {
+      "id": "1",
+      "name": "Sumeet Rasela",
+      "city": "Parasia",
+      "contact": "Sumeet Rasela",
+      "phone": "+91 95225 28888",
+      "ownerName": "Sumeet Rasela",
+      "ownerEmail": "9522528888skr@gmail.com",
+      "ownerPhone": "+91 95225 28888",
+      "password": "dummy_password",
+      "createdAt": "2026-06-19T08:00:34.923Z"
+    }
+  ],
+  "live_matches": [],
+  "users": [],
+  "tournaments": [],
+  "tournament_teams": [],
+  "tournament_members": [],
+  "tournament_brackets": [],
+  "premium_users": [
+    {
+      "id": 1,
+      "joined_at": "2026-06-22T05:34:26.576Z"
+    }
+  ],
+  "chat_messages": []
+}
