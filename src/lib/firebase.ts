@@ -1,22 +1,36 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getAuth, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, query, where } from 'firebase/firestore';
+import firebaseConfig from '../firebase-applet-config.json';
 
-// Firebase config daal - Firebase Console se copy kar
-const firebaseConfig = {
-  apiKey: "AIzaSyXXXXXXXXXXXXXXXXX",
-  authDomain: "checkmateprochess.firebaseapp.com",
-  projectId: "checkmateprochess",
-  storageBucket: "checkmateprochess.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef123456"
-};
+// Detect whether the user has configured Firebase with live cloud credentials
+const isConfigured = firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "";
 
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+export let app: any = null;
+export let auth: any = null;
+export let db: any = null;
 
-// Academy - Ab hamesha Firebase se
+if (isConfigured) {
+  try {
+    app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+    auth = getAuth(app);
+    db = getFirestore(app, firebaseConfig.firestoreDatabaseId || '(default)');
+    console.log("Firebase initialized successfully with live credentials.");
+  } catch (error) {
+    console.error("Firebase initialization failed; falling back to local fallback mode:", error);
+  }
+} else {
+  console.log("CheckMate Pro: Running in Local Persistence Mode (Awaiting live Firebase keys).");
+}
+
+// -------------------------------------------------------------
+// LOCAL STATE STORAGE ENGINE (FALLBACK ENGINE)
+// -------------------------------------------------------------
+// Simulates standard Auth users and Firestore users collection inside localStorage
+
+const API = '/api';
+
+// Academy
 export const getAcademies = async () => {
   const snap = await getDocs(collection(db, 'franchises')); 
   return snap.docs.map(doc => ({ 
@@ -36,65 +50,6 @@ export const addAcademy = async (data: any) => {
   return await addDoc(collection(db, 'franchises'), data);
 };
 
-export const deleteAcademy = async (id: string) => {
-  await deleteDoc(doc(db, 'franchises', id));
-};
-
-// Admin ke liye same function
-export const fetchAllAcademies = getAcademies;
-
-// Baaki functions
-export const fetchAllUsers = async () => {
-  const snap = await getDocs(collection(db, 'users'));
-  return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
-};
-
-export const fetchPlayersByAcademy = async (academyUid: string) => {
-  const q = query(collection(db, 'users'), where('academyId', '==', academyUid));
-  const snap = await getDocs(q);
-  return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
-};
-
-console.log("CheckMate Pro: Firebase PERMANENT MODE - No more local.db");
-
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import firebaseConfig from '../firebase-applet-config.json';
-
-// Detect whether the user has configured Firebase with live cloud credentials
-const isConfigured = firebaseConfig && firebaseConfig.apiKey && firebaseConfig.apiKey !== "";
-
-let fbApp: any = null;
-let fbAuth: any = null;
-let fbDb: any = null;
-
-if (isConfigured) {
-  try {
-    fbApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-    fbAuth = getAuth(fbApp);
-    fbDb = getFirestore(fbApp, firebaseConfig.firestoreDatabaseId || '(default)');
-    console.log("Firebase initialized successfully with live credentials.");
-  } catch (error) {
-    console.error("Firebase initialization failed; falling back to local fallback mode:", error);
-  }
-} else {
-  console.log("CheckMate Pro: Running in Local Persistence Mode (Awaiting live Firebase keys).");
-}
-
-// -------------------------------------------------------------
-// LOCAL STATE STORAGE ENGINE (FALLBACK ENGINE)
-// -------------------------------------------------------------
-// Simulates standard Auth users and Firestore users collection inside localStorage
-
-const API = '/api';
-
-// Academy
-export const getAcademies = () => fetch(`${API}/academies`).then(r => r.json());
-export const addAcademy = (data: any) => fetch(`${API}/academies`, {
-  method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(data)
-}).then(r => r.json());
-
 // Live Match
 export const startMatch = (player1: string, player2: string) => 
   fetch(`${API}/start-match`, {
@@ -111,23 +66,11 @@ export const updateMove = (matchId: string, fen: string, move: string) =>
     body: JSON.stringify({fen, move})
   });
 
-export const auth: any = null;
-export const db: any = null;
-export const app: any = null;
-console.log("CheckMate Pro: Running in Local DB Mode - Data will persist");
+console.log("CheckMate Pro: Running in Firebase Permanent Mode - Data will persist");
 
-export async function deleteAcademy(id: string | number) {
-  try {
-    const res = await fetch(`${API}/academies/${id}`, {
-      method: 'DELETE'
-    });
-    if (!res.ok) throw new Error('Delete failed');
-    return await res.json();
-  } catch (err) {
-    console.error('Delete Academy Error:', err);
-    throw err;
-  }
-}
+export const deleteAcademy = async (id: string | number) => {
+  await deleteDoc(doc(db, 'franchises', String(id)));
+};
 
 
 export interface AppUser {
@@ -781,41 +724,17 @@ export const registerAcademyByAdmin = async (fields: {
 
 // Fetch players belonging to a specific academy owner
 export const fetchPlayersByAcademy = async (academyUid: string): Promise<AppUser[]> => {
-  if (isConfigured && db) {
+  if (db) {
     try {
-      const { getDocs, collection, query, where } = await import('firebase/firestore');
-      
-      const q1 = query(collection(db, 'users'), where('createdBy', '==', academyUid));
-      const q2 = query(collection(db, 'users'), where('academyId', '==', academyUid));
-      
-      const [s1, s2] = await Promise.all([
-        getDocs(q1).catch(() => null),
-        getDocs(q2).catch(() => null)
-      ]);
-      
-      const map = new Map<string, AppUser>();
-      
-      if (s1) {
-        s1.forEach((doc: any) => {
-          map.set(doc.id, { uid: doc.id, ...doc.data() } as AppUser);
-        });
-      }
-      if (s2) {
-        s2.forEach((doc: any) => {
-          map.set(doc.id, { uid: doc.id, ...doc.data() } as AppUser);
-        });
-      }
-      
-      return Array.from(map.values()).filter(p => p.role === 'player');
+      const q = query(collection(db, 'users'), where('academyId', '==', academyUid));
+      const snap = await getDocs(q);
+      return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() } as AppUser));
     } catch (e) {
-      console.warn("Falling back to local players list matcher:", e);
-      const all = getLocalUsers();
-      return all.filter(u => (u.createdBy === academyUid || u.academyId === academyUid) && u.role === 'player');
+      console.error("Firestore fetchOfflinePlayers error:", e);
+      return [];
     }
-  } else {
-    const all = getLocalUsers();
-    return all.filter(u => (u.createdBy === academyUid || u.academyId === academyUid) && u.role === 'player');
   }
+  return [];
 };
 
 // Update an academy player's profile details
@@ -825,8 +744,8 @@ export const updateAcademyPlayer = async (
 ): Promise<void> => {
   if (isConfigured && db) {
     try {
-      const { doc, updateDoc } = await import('firebase/firestore');
-      const userRef = doc(db, 'users', playerId);
+      const { doc: fireDoc, updateDoc } = await import('firebase/firestore');
+      const userRef = fireDoc(db, 'users', playerId);
       await updateDoc(userRef, {
         fullName: updatedFields.fullName,
         age: updatedFields.age,
@@ -854,36 +773,7 @@ export const updateAcademyPlayer = async (
 };
 
 // Fetch all registered academies (useful for the Admin dashboard summary)
-export const fetchAllAcademies = async (): Promise<AppUser[]> => {
-  if (isConfigured && db) {
-    try {
-      const { getDocs, collection, query, where } = await import('firebase/firestore');
-      const q = query(collection(db, 'users'), where('role', '==', 'academy'));
-      
-      let snapshot: any = null;
-      try {
-        snapshot = await getDocs(q);
-      } catch (err) {
-        handleFirestoreError(err, 'get', 'users');
-      }
-
-      if (snapshot) {
-        const list: AppUser[] = [];
-        snapshot.forEach((doc: any) => {
-          list.push({ uid: doc.id, ...doc.data() } as AppUser);
-        });
-        return list;
-      }
-      return [];
-    } catch (e) {
-      const all = getLocalUsers();
-      return all.filter(u => u.role === 'academy');
-    }
-  } else {
-    const all = getLocalUsers();
-    return all.filter(u => u.role === 'academy');
-  }
-};
+export const fetchAllAcademies = getAcademies;
 
 // Check if Firebase is currently in mock-mode
 export const isMockActive = () => {
@@ -1896,23 +1786,16 @@ export const subscribeToAllEvents = (callback: (list: EventDoc[]) => void): () =
 
 // Authoritative user resolver list fetching
 export const fetchAllUsers = async (): Promise<AppUser[]> => {
-  if (isConfigured && db) {
+  if (db) {
     try {
-      const { getDocs, collection } = await import('firebase/firestore');
-      const collRef = collection(db, 'users');
-      const snapshot = await getDocs(collRef);
-      const list: AppUser[] = [];
-      snapshot.forEach((doc: any) => {
-        list.push({ uid: doc.id, ...doc.data() } as AppUser);
-      });
-      return list;
+      const snapshot = await getDocs(collection(db, 'users'));
+      return snapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() } as AppUser));
     } catch (e) {
-      console.warn("Falling back to local users:", e);
-      return getLocalUsers();
+      console.error("Firestore fetchAllUsers error:", e);
+      return [];
     }
-  } else {
-    return getLocalUsers();
   }
+  return [];
 };
 
 export const subscribeToAllUsers = (callback: (list: AppUser[]) => void): () => void => {

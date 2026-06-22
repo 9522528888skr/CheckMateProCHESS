@@ -1,8 +1,3 @@
-// Line 1087 ke aas paas hoga
-<span className="text-xs font-black text-neutral-950">
-  {academy.academyName}  // academy.name ki jagah ye kar de
-</span>
-
 import { useState, useEffect, FormEvent } from 'react';
 import { 
   User, 
