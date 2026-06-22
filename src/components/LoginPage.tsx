@@ -67,14 +67,14 @@ export default function LoginPage({ onLoginSuccess, academies, onShowLeaderboard
   const [captchaVerifying, setCaptchaVerifying] = useState(false);
 
   // Set default academy selection once loaded
-  useEffect(() => {
-    if (academies.length > 0 && !signUpAcademyId) {
-      const defaultAcademy = academies.find(
-        (a) => a.name === "Sumeet Rasela" && a.city === "Parasia"
-      ) || academies[0];
-      setSignUpAcademyId(defaultAcademy.id);
-    }
-  }, [academies, signUpAcademyId]);
+  // useEffect(() => {
+    // if (academies.length > 0 && !signUpAcademyId) {
+      // const defaultAcademy = academies.find(
+      // (a) => a.name === "Sumeet Rasela" && a.city === "Parasia"
+      // ) || academies[0];
+      // setSignUpAcademyId(defaultAcademy.id);
+    // }
+  // }, // [academies, signUpAcademyId]);
 
   // Reset states on tab toggle
   const handleTabToggle = (tabValue: ActiveTab) => {
