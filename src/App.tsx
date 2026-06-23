@@ -777,7 +777,7 @@ export default function App() {
                 <span>System Administration Console</span>
                 <span className="px-2.5 py-0.5 bg-green-500/15 text-green-500 text-5xs font-mono font-bold tracking-wider rounded border border-green-500/20 uppercase animate-pulse">Master State</span>
               </h2>
-              <p className="text-3xs text-neutral-600 dark:text-neutral-450 font-mono mt-0.5">Authoritative control node. Register new academy partners, audit franchises, and track global Chess student enrollment metrics.</p>
+              <p className="text-3xs text-neutral-600 dark:text-neutral-450 font-mono mt-0.5">Authoritative control node. Register new academy partners, audit academies, and track global Chess student enrollment metrics.</p>
             </div>
 
             {/* Admin Console Local Tab Switcher */}
@@ -853,7 +853,7 @@ export default function App() {
               </div>
               <div className="p-4 bg-white dark:bg-neutral-900 border border-neutral-200/60 dark:border-neutral-800 rounded-2xl">
                 <h4 className="text-5xs font-mono text-neutral-400 uppercase tracking-widest">TOTAL ACADEMIES</h4>
-                <p className="text-sm font-black text-neutral-950 dark:text-white mt-1">{allAcademies.length} Franchises</p>
+                <p className="text-sm font-black text-neutral-950 dark:text-white mt-1">{allAcademies.length} academies</p>
                 <p className="text-5xs text-neutral-400 mt-0.5">Verified chess learning hubs</p>
               </div>
               <div className="p-4 bg-white dark:bg-neutral-900 border border-neutral-200/60 dark:border-neutral-800 rounded-2xl">
