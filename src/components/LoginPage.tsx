@@ -1,44 +1,31 @@
 import { useState, FormEvent, useEffect } from 'react';
-import { 
-  User, 
-  Building2, 
-  Shield, 
-  Mail, 
-  Lock, 
-  AlertTriangle, 
-  CheckCircle, 
-  Loader2, 
-  GraduationCap 
+import {
+  User, Building2, Shield, Mail, Lock, AlertTriangle,
+  CheckCircle, Loader2, GraduationCap
 } from 'lucide-react';
-const HARDCODED_ACADEMIES = [
-  { 
-    id: 'sumeet_rasela_parasia_001',
-    name: 'Sumeet Rasela Chess Academy',
-    academyName: 'Sumeet Rasela Chess Academy',
-    city: 'Parasia'
-  }
-];
-
-const LoginPage = () => {
-  const [academies, setAcademies] = useState(HARDCODED_ACADEMIES);
-  const [signUpAcademyId, setSignUpAcademyId] = useState('');
-import { 
-  loginUser, 
-  registerPlayer, 
-  isMockActive, 
-  AppUser, 
-  AcademyDoc 
+import {
+  loginUser, registerPlayer, isMockActive, AppUser, AcademyDoc
 } from '../lib/firebase';
 
 interface LoginPageProps {
   onLoginSuccess: (user: AppUser) => void;
-  academies: AcademyDoc[];
+  // academies: AcademyDoc[]; <-- Isko hata diya. Conflict kar raha tha
   onShowLeaderboard: () => void;
 }
 
 type ActiveTab = 'player' | 'academy' | 'admin';
 
-export default function LoginPage({ onLoginSuccess, academies, onShowLeaderboard }: LoginPageProps) {
+const HARDCODED_ACADEMIES = [
+  {
+    id: 'sumeet-rasela-1',
+    uid: 'sumeet-rasela-1',
+    name: 'Sumeet Rasela',
+    academyName: 'Sumeet Rasela Chess Academy - Parasia',
+    city: 'Parasia'
+  }
+];
+
+export default function LoginPage({ onLoginSuccess, onShowLeaderboard }: LoginPageProps) {
   const [activeTab, setActiveTab] = useState<ActiveTab>('player');
   const [isSignUpPlayer, setIsSignUpPlayer] = useState(false);
 
@@ -53,9 +40,12 @@ export default function LoginPage({ onLoginSuccess, academies, onShowLeaderboard
   const [signUpPhone, setSignUpPhone] = useState('');
   const [signUpEmail, setSignUpEmail] = useState('');
   const [signUpSchool, setSignUpSchool] = useState('');
-  const [signUpAcademyId, setSignUpAcademyId] = useState('');
   const [signUpClass, setSignUpClass] = useState('1st');
   const [signUpPassword, setSignUpPassword] = useState('');
+
+  // Academy dropdown states - YAHI SAHI HAI
+  const [academies, setAcademies] = useState(HARDCODED_ACADEMIES);
+  const [signUpAcademyId, setSignUpAcademyId] = useState('sumeet-rasela-1');
 
   // Status and loading states
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -66,18 +56,23 @@ export default function LoginPage({ onLoginSuccess, academies, onShowLeaderboard
   const [captchaVerified, setCaptchaVerified] = useState(false);
   const [captchaVerifying, setCaptchaVerifying] = useState(false);
 
-  // Set default academy selection once loaded
+  // Firebase wala useEffect abhi band rakha hai
   // useEffect(() => {
-    // if (academies.length > 0 && !signUpAcademyId) {
-      // const defaultAcademy = academies.find(
-      // (a) => a.name === "Sumeet Rasela" && a.city === "Parasia"
-      // ) || academies[0];
-      // setSignUpAcademyId(defaultAcademy.id);
-    // }
-  // }, // [academies, signUpAcademyId]);
+  // getAcademies().then(data => setAcademies(data));
+  // }, []);
 
-  // Reset states on tab toggle
-  const handleTabToggle = (tabValue: ActiveTab) => {
+  // Default select wala useEffect bhi band hai
+  // useEffect(() => {
+  // if (academies.length > 0 &&!signUpAcademyId) {
+  // const defaultAcademy = academies.find(
+  // (a) => a.name === "Sumeet Rasela" && a.city === "Parasia"
+  // ) || academies[0];
+  // setSignUpAcademyId(defaultAcademy.id);
+  // }
+  // }, [academies, signUpAcademyId]);
+
+  // Reset states on tab toggle  
+const handleTabToggle = (tabValue: ActiveTab) => {
     setActiveTab(tabValue);
     setErrorMsg(null);
     setSuccessMsg(null);
